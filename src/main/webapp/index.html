@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Custom DataGrid Pager - jQuery EasyUI Demo</title>
+<link rel="stylesheet" type="text/css"
+	href="jquery-easyui-1.5.5.4/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css"
+	href="jquery-easyui-1.5.5.4/themes/icon.css">
+<link rel="stylesheet" type="text/css"
+	href="jquery-easyui-1.5.5.4/demo/demo.css">
+<script type="text/javascript" src="jquery-easyui-1.5.5.4/jquery.min.js"></script>
+<script type="text/javascript"
+	src="jquery-easyui-1.5.5.4/jquery.easyui.min.js"></script>
+<script type="text/javascript">
+	$(function() {
+		var pager = $('#dg').datagrid().datagrid('getPager'); // get the pager of datagrid
+		pager.pagination({
+			buttons : [ {
+				iconCls : 'icon-search',
+				handler : function() {
+
+				}
+			}, {
+				iconCls : 'icon-add',
+				handler : function() {
+					$('#win').dialog('open');
+				}
+			}, {
+				iconCls : 'icon-edit',
+				handler : function() {
+					alert('edit');
+				}
+			} ]
+		});
+	})
+	var toolbar = [ {
+		text : 'Add',
+		iconCls : 'icon-add',
+		handler : function() {
+			$('#win').dialog('open');
+		}
+	}, {
+		text : 'Save',
+		iconCls : 'icon-save',
+		handler : function() {
+
+		}
+	}, {
+		text : 'Remove',
+		iconCls : 'icon-remove',
+		handler : function() {
+			var row = $('#dg').datagrid('getSelected');
+			if (row) {
+				$.messager.confirm("系统提示", "您确定删除这条记录?", function(r) {
+					if (r) {
+						$.post('UserDeleteServlet', {
+							delId : row.id
+						}, function(result) {
+							if (result.success) {
+								$.messager.alert("系统提示", "已成功删除这条记录");
+								$('#dg').datagrid("reload");
+							} else {
+								$('#dg').datagrid(result.errorMsg);
+							}
+						}, 'json')
+					}
+				});
+			}
+		}
+	}, {
+		text : '导出用户',
+		iconCls : 'icon-print',
+		handler : function() {
+			window.open('UserExportServlet');
+		}
+	}, {
+		text : '模板批量导入用户',
+		iconCls : 'icon-import',
+		handler : function() {
+			$('#fileWindow').dialog('open');
+		}
+	} ];
+	function submitForm() {
+		$('#ff').form({
+			url : 'UserAddServlet',
+			onSubmit : function() {
+				return $(this).form('enableValidation').form('validate');
+			},
+			success : function(result) {
+				var result = eval('(' + result + ')');
+				if (result.success) {
+					$('#ff').form('clear');
+					$('#win').dialog('close');
+					$('#dg').datagrid("reload");
+				} else {
+					$('#dg').datagrid(result.errorMsg);
+				}
+			}
+		});
+		$('#ff').submit();
+	}
+	function downloadExcel() {
+		window.open('template/ExcelTemplate.xlsx');
+	}
+	function uploadExcel() {
+		$('#fileform').form({
+			url : 'UserImportServlet',
+			onSubmit : function() {
+				return $(this).form('enableValidation').form('validate');
+			},
+			success : function(result) {
+				var result = eval('(' + result + ')');
+				if (result.success) {
+					$('#fileform').form('clear');
+					$('#fileWindow').dialog('close');
+					$('#dg').datagrid("reload");
+				} else {
+					$('#dg').datagrid(result.errorMsg);
+				}
+			}
+		});
+		$('#fileform').submit();
+	}
+</script>
+</head>
+<body>
+	<h2>用户管理界面</h2>
+	<div style="margin: 20px 0;"></div>
+	<table id="dg" title="用户管理" style="width: 700px; height: 450px"
+		data-options="rownumbers:true,singleSelect:true,pagination:true,url:'UserListServlet',method:'post', toolbar:toolbar">
+		<thead>
+			<tr>
+				<th data-options="field:'id',width:80,align:'center'">编号</th>
+				<th data-options="field:'name',width:100,align:'center'">姓名</th>
+				<th data-options="field:'phone',width:120,align:'center',editor:'text'">电话</th>
+				<th data-options="field:'email',width:200,align:'center'">Email</th>
+				<th data-options="field:'qq',width:120,align:'center'">QQ</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="win" class="easyui-window" title="AddUser" closed="true"
+		style="width: 300px; height: 250px;">
+		<form id="ff" class="easyui-form" method="post"
+			data-options="novalidate:true">
+			<table cellpadding="5">
+				<tr>
+					<td>Name:</td>
+					<td><input class="easyui-textbox" type="text" name="name"
+						data-options="required:true"></input></td>
+				</tr>
+				<tr>
+					<td>Email:</td>
+					<td><input class="easyui-textbox" type="text" name="email"
+						data-options="required:true,validType:'email'"></input></td>
+				</tr>
+				<tr>
+					<td>Phone:</td>
+					<td><input class="easyui-textbox" type="text" name="phone"
+						data-options="required:true"></input></td>
+				</tr>
+				<tr>
+					<td>QQ:</td>
+					<td><input class="easyui-textbox" type="text" name="qq"
+						data-options="required:true"></input></td>
+				</tr>
+			</table>
+		</form>
+		<div style="text-align: center; padding: 5px">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				onclick="submitForm()">Submit</a> <a href="javascript:void(0)"
+				class="easyui-linkbutton"
+				onclick="$('#ff').form('clear');$('#win').dialog('close')">Clear</a>
+		</div>
+	</div>
+	<div id="fileWindow" class="easyui-window" title="AddUserByExcel" closed="true"
+		style="width: 300px; height: 250px;">
+		<form id="fileform" class="easyui-form" method="post"
+			data-options="novalidate:true" enctype="multipart/form-data">
+			<table cellpadding="5">
+				<tr>
+					<td>模板下载:</td>
+					<td><a href="javascript:void(0)" class="easyui-linkbutton"
+				onclick="downloadExcel()">download</a></td>
+				</tr>
+				<tr>
+					<td>File:</td>
+					<td><input class="easyui-filebox" name="file1" data-options="prompt:'Choose a file...'" style="width:100%"></input></td>
+				</tr>
+			</table>
+		</form>
+		<div style="text-align: center; padding: 5px">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				onclick="uploadExcel()">Upload</a> <a href="javascript:void(0)"
+				class="easyui-linkbutton"
+				onclick="$('#fileform').form('clear');$('#fileWindow').dialog('close')">Close</a>
+		</div>
+	</div>
+</body>
+</html>

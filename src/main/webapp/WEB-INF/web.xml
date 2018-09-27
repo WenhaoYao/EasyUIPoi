@@ -1,0 +1,57 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+  <servlet>
+  	<servlet-name>UserListServlet</servlet-name>
+  	<display-name>UserListServlet</display-name>
+  	<description></description>
+  	<servlet-class>jxau.web.UserListServlet</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>UserDeleteServlet</servlet-name>
+  	<display-name>UserDeleteServlet</display-name>
+  	<description></description>
+  	<servlet-class>jxau.web.UserDeleteServlet</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>UserAddServlet</servlet-name>
+  	<display-name>UserAddServlet</display-name>
+  	<description></description>
+  	<servlet-class>jxau.web.UserAddServlet</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>UserExportServlet</servlet-name>
+  	<display-name>UserExportServlet</display-name>
+  	<description></description>
+  	<servlet-class>jxau.web.UserExportServlet</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>UserImportServlet</servlet-name>
+  	<display-name>UserImportServlet</display-name>
+  	<description></description>
+  	<servlet-class>jxau.web.UserImportServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>UserListServlet</servlet-name>
+  	<url-pattern>/UserListServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>UserDeleteServlet</servlet-name>
+  	<url-pattern>/UserDeleteServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>UserAddServlet</servlet-name>
+  	<url-pattern>/UserAddServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>UserExportServlet</servlet-name>
+  	<url-pattern>/UserExportServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>UserImportServlet</servlet-name>
+  	<url-pattern>/UserImportServlet</url-pattern>
+  </servlet-mapping>
+</web-app>
