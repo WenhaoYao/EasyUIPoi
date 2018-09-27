@@ -1,5 +1,6 @@
 package jxau.util;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -84,7 +85,7 @@ public class ExcelUtil {
 	/**
 	 * 
 	 * @Title: getWorkBook
-	 * @Description: 通过判断后缀名的格式判断生成 的workbook的类型
+	 * @Description: 通过上传的文件判断后缀名的格式判断生成的workbook的类型
 	 * @param input
 	 * @param fileExtName
 	 * @return
@@ -92,7 +93,7 @@ public class ExcelUtil {
 	 * @return: Workbook
 	 */
 	public static Workbook getWorkBook(InputStream input, String fileExtName) throws IOException {
-		Workbook workbook = null;
+		Workbook workbook;
 		POIFSFileSystem fileSystem = null;
 		if("xls".equals(fileExtName)) {
 			try {
@@ -103,6 +104,23 @@ public class ExcelUtil {
 			}
 		} else if("xlsx".equals(fileExtName)) {
 			workbook = new XSSFWorkbook(input);
+		} else {
+			throw new RuntimeException("后缀名为空");
+		}
+		return workbook;
+	}
+
+	public static Workbook getWorkBook(String filedir) throws IOException {
+		Workbook workbook = null;
+		POIFSFileSystem fileSystem = null;
+		InputStream inputStream = new FileInputStream(filedir);
+//		得到路径的后缀名
+		String fileExtName = filedir.substring(filedir.lastIndexOf(".") + 1);
+		if ("xls".equals(fileExtName)) {
+			fileSystem = new POIFSFileSystem(inputStream);
+			workbook = new HSSFWorkbook(fileSystem);
+		} else if ("xlsx".equals(fileExtName)) {
+			workbook = new XSSFWorkbook(inputStream);
 		} else {
 			throw new RuntimeException("后缀名为空");
 		}
